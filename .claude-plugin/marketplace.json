@@ -1,0 +1,20 @@
+{
+  "name": "wyt-skills",
+  "owner": {
+    "name": "wangyutong"
+  },
+  "metadata": {
+    "description": "wyt's personal skills collection",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "wyt-skills",
+      "source": "./",
+      "description": "Personal skills: lightweight workflows for code modification, etc.",
+      "version": "0.1.0",
+      "keywords": ["personal", "workflow"],
+      "category": "workflow"
+    }
+  ]
+}
