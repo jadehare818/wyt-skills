@@ -26,6 +26,12 @@ ANY user request that will modify source code:
 
 ## Workflow
 
+### Step 0 — Brainstorm (prerequisite, before any file is written)
+
+Invoke the `coding-brainstorm` skill and complete the brainstorm conversation with the user. This step is a multi-round dialogue — no files are written, no plan is produced. The brainstorm ends when approach, boundaries, scope, and decisions are all clear (see coding-brainstorm's exit criteria).
+
+Only after the brainstorm has converged and the user is ready to proceed, move to Step 1.
+
 ### Step 1 — Understand & propose (write two files, do not write any source code)
 
 Pick a kebab-case slug from the request topic (e.g. `add-feedback-tag-field`, `fix-op-false-dump`, `refactor-pe-resolver`). Do NOT ask the user for the slug — just pick one.
@@ -45,9 +51,16 @@ Capture user intent and acceptance criteria. Stay product-level, no implementati
 <one paragraph restating what the user wants, in your own words>
 
 ## 验收标准 (AC)
-- [criterion 1]
-- [criterion 2]
+Each criterion must be a testable predicate — phrased so that it can be mechanically judged true or false, not a narrative description.
+- [ ] [predicate 1 — e.g. "当 X 条件成立时，系统返回 Y，耗时 < Z ms"]
+- [ ] [predicate 2]
 - ...
+
+## 不变量 (Invariants) — 本次改动不得破坏
+Things that must remain true after this change. Explicit contracts, formats, behaviors that existing callers depend on.
+- [invariant 1 — e.g. "现有 /v1/xxx 的响应格式不变"]
+- [invariant 2]
+- (write "无" if nothing)
 
 ## 我注意到的关键边界 / 已知约束
 - [boundary or constraint observed from conversation or quick code scan]
@@ -75,9 +88,15 @@ Concrete design. Reference real files with `file:line` where relevant. No code b
 | ... | ... | ... |
 
 ## 实施步骤
-1. <specific action — file path + what changes>
-2. <specific action>
+Each step must tag which AC/Invariant it satisfies (traceability).
+1. <specific action — file path + what changes> → satisfies AC-1
+2. <specific action> → satisfies AC-2, preserves INV-1
 3. ...
+
+After listing all steps, verify coverage:
+- Every AC must be addressed by at least one step
+- Every Invariant must have at least one step that explicitly preserves/tests it
+- Any step that doesn't trace to an AC or Invariant may be unnecessary — justify or remove
 
 ## 测试计划
 - 单元测试: <which functions/components>
@@ -123,6 +142,7 @@ When done, print which files changed and a brief summary. Suggest invoking `supe
 
 ## Notes for the assistant
 
-- This skill **complements** `superpowers:brainstorming`, `superpowers:writing-plans`, `superpowers:test-driven-development`, `superpowers:verification-before-completion`. You may use any of those skills to organize your thinking inside Step 1 or Step 3 — but the file-writing and pause requirements of this skill are mandatory.
-- The user wants to participate in the *direction* (Step 2 review) but otherwise gives you autonomy. Don't ask micro-questions during Step 1 / Step 3 — just produce good artifacts and stay efficient.
+- Step 0 (`coding-brainstorm`) is where all the back-and-forth discussion happens. By the time you reach Step 1, decisions should already be made — just write them down cleanly.
+- This skill **complements** `superpowers:writing-plans`, `superpowers:test-driven-development`, `superpowers:verification-before-completion`. You may use any of those skills to organize your thinking inside Step 1 or Step 3 — but the file-writing and pause requirements of this skill are mandatory.
+- The user wants to participate in the *direction* (Step 0 brainstorm + Step 2 review) but otherwise gives you autonomy. Don't ask micro-questions during Step 1 / Step 3 — just produce good artifacts and stay efficient.
 - `.claude/plans/<slug>/` files are kept after implementation for retrospective. Don't delete them.
